@@ -8,7 +8,7 @@ import os
 
 class QualityReportGenerator:
     """
-    生成气象数据质量报告（纯Python版本）
+    生成气象数据质量报告(纯Python版本)
     """
     
     def __init__(self, raw_df: pd.DataFrame, cleaned_df: pd.DataFrame):
@@ -153,7 +153,7 @@ class QualityReportGenerator:
     
     def _auto_detect_outliers(self) -> Dict:
         """
-        自动检测异常值（基于3σ原则）
+        自动检测异常值(基于3σ原则)
         """
         outlier_analysis = {"method": "自动检测 (3σ原则)"}
         
@@ -490,7 +490,7 @@ if __name__ == "__main__":
     print("测试报告生成器模块...")
     
     # 创建测试数据
-    dates = pd.date_range("2024-01-01", periods=100, freq="H")
+    dates = pd.date_range("2024-01-01", periods=100, freq="h")
     temperatures = np.random.normal(20, 5, 100)
     
     # 添加缺失值和异常值
