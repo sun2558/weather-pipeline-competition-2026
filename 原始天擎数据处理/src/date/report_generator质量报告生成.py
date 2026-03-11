@@ -130,7 +130,7 @@ class QualityReportGenerator:
         生成异常值分析
         
         Args:
-            outlier_mask: 布尔序列，True表示异常值
+            outlier_mask: 布尔序列,True表示异常值
         """
         if outlier_mask is not None:
             outlier_count = int(outlier_mask.sum())
@@ -485,40 +485,27 @@ def generate_quality_report(raw_df: pd.DataFrame,
     return report_gen
 
 
-# 测试代码
 if __name__ == "__main__":
-    print("测试报告生成器模块...")
+    # 1. 读取你的真实数据
+    data_path = "../../demo_data.csv"  # 从 src/date 退两层
+    print(f"正在读取数据: {data_path}")
+    df = pd.read_csv(data_path)
+    print(f"数据形状: {df.shape}")
     
-    # 创建测试数据
-    dates = pd.date_range("2024-01-01", periods=100, freq="h")
-    temperatures = np.random.normal(20, 5, 100)
+    # 2. 简单清洗（示例）
+    df_cleaned = df.copy()
+    if 'temperature' in df_cleaned.columns:
+        # 用均值填充温度缺失值
+        mean_temp = df_cleaned['temperature'].mean()
+        df_cleaned['temperature'].fillna(mean_temp, inplace=True)
     
-    # 添加缺失值和异常值
-    temperatures[10:15] = np.nan  # 连续缺失
-    temperatures[50] = 100  # 异常值
+    # 3. 创建报告生成器
+    generator = QualityReportGenerator(raw_df=df, cleaned_df=df_cleaned)
     
-    raw_df = pd.DataFrame({
-        "timestamp": dates,
-        "temperature": temperatures
-    })
+    # 4. 生成报告
+    generator.generate_full_report(column='temperature')
     
-    # 模拟清洗过程
-    cleaned_df = raw_df.copy()
-    cleaned_df["temperature"] = cleaned_df["temperature"].interpolate()
+    # 5. 保存报告
+    generator.save_report(format='txt', path='../../reports/quality_report.txt')
     
-    # 创建异常值掩码（模拟检测结果）
-    outlier_mask = pd.Series([False] * 100)
-    outlier_mask[50] = True
-    
-    # 测试报告生成
-    print("\n生成测试报告...")
-    report_gen = generate_quality_report(
-        raw_df=raw_df,
-        cleaned_df=cleaned_df,
-        column="temperature",
-        outlier_mask=outlier_mask,
-        save_format="txt",
-        save_path="./reports/test_report.txt"
-    )
-    
-    print("\n✅ 测试完成!")
+    print("\n✅ 真实数据处理完成！")
